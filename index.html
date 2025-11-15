@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你的名字 - 高级作品集</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #00bcd4;
+            --background-color: #121212;
+            --surface-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --heading-color: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 当弹窗打开时，禁止背景滚动 */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--surface-color);
+        }
+
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1200px; margin: 0 auto; padding: 1rem 2rem;
+        }
+
+        nav .logo { font-size: 1.5rem; font-weight: 700; color: var(--heading-color); }
+        nav ul { list-style: none; display: flex; padding: 0; }
+        nav ul li { margin-left: 30px; }
+        nav a { color: var(--text-color); text-decoration: none; font-weight: 400; transition: color 0.3s ease; }
+        nav a:hover { color: var(--primary-color); }
+
+        main { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+        section {
+            padding: 6rem 0; opacity: 0; transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        h2 {
+            text-align: center; font-size: 2.5rem; font-weight: 600;
+            color: var(--heading-color); margin-bottom: 3rem; position: relative;
+        }
+        h2::after {
+            content: ''; display: block; width: 60px; height: 4px;
+            background: var(--primary-color); margin: 0.5rem auto 0; border-radius: 2px;
+        }
+
+        .hero {
+            min-height: 80vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+        }
+        .hero h1 { font-size: 4rem; font-weight: 700; color: var(--heading-color); margin: 0; }
+        .hero .tagline { font-size: 1.5rem; color: var(--primary-color); font-weight: 400; margin: 0.5rem 0 1.5rem 0; }
+        .hero .bio { max-width: 600px; font-size: 1.1rem; line-height: 1.8; }
+
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+
+        .project-card {
+            background: var(--surface-color); border-radius: 12px; overflow: hidden;
+            box-shadow: 0 8px 24px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover { transform: translateY(-10px); box-shadow: 0 12px 32px var(--shadow-color); }
+        .project-card .image-container { position: relative; height: 250px; background: #333; cursor: pointer; }
+        .project-card img { width: 100%; height: 100%; object-fit: cover; }
+        .project-card .content { padding: 1.5rem; }
+        .project-card h3 { margin: 0 0 0.5rem 0; color: var(--heading-color); font-size: 1.5rem; }
+        .project-card p { margin: 0 0 1.5rem 0; font-size: 1rem; }
+        
+        .btn {
+            display: inline-block; background: var(--primary-color); color: var(--heading-color) !important;
+            padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 50px;
+            font-weight: 600; transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .btn:hover { background-color: #0097a7; transform: scale(1.05); }
+
+        /* 新增：项目弹窗 (Modal) 样式 */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none; /* 默认隐藏 */
+            align-items: center; justify-content: center;
+            z-index: 2000;
+            padding: 2rem; box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-content {
+            background: var(--surface-color);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.4s ease-out;
+        }
+        @keyframes slideIn { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .close-button {
+            position: absolute; top: 1rem; right: 1.5rem;
+            font-size: 2.5rem; font-weight: bold;
+            color: var(--text-color); cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .close-button:hover { color: var(--primary-color); }
+        
+        .modal-body img { width: 100%; border-radius: 8px; margin-bottom: 2rem; }
+        .modal-body h2 { text-align: left; font-size: 2rem; margin-bottom: 1rem; }
+        .modal-body p { font-size: 1.1rem; line-height: 1.8; color: var(--text-color); }
+        .modal-body h2::after { margin: 0.5rem 0 0 0; } /* 修正标题下划线位置 */
+
+        #contact { text-align: center; }
+        #contact p { max-width: 500px; margin: 0 auto 2rem auto; font-size: 1.1rem; }
+        #contact ul { list-style: none; padding: 0; display: flex; justify-content: center; gap: 2rem; font-size: 1.1rem; }
+        #contact a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+
+        footer { text-align: center; padding: 2rem; margin-top: 4rem; border-top: 1px solid var(--surface-color); }
+
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 1rem; }
+            .hero h1 { font-size: 2.8rem; }
+            .hero .tagline { font-size: 1.2rem; }
+            h2 { font-size: 2rem; }
+            .modal-content { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">你的名字</div>
+            <ul>
+                <li><a href="#about">关于我</a></li>
+                <li><a href="#portfolio">作品集</a></li>
+                <li><a href="#contact">联系我</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="about" class="hero">
+            <h1>你好，我是 [你的名字]</h1>
+            <p class="tagline">[你的头衔，例如：创意UX设计师]</p>
+            <p class="bio">[在这里写一段关于你自己的简介。介绍你的热情、技能和职业目标。让访问者可以快速了解你。]</p>
+        </section>
+
+        <section id="portfolio">
+            <h2>作品集</h2>
+            <div class="portfolio-grid">
+                <!-- 项目 1 -->
+                <div class="project-card" id="project1">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1555774698-0b77e0abfe3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8dXNlciBpbnRlcmZhY2V8fHx8fHwxNzMyNjQ0ODg3&ixlib=rb-4.0.3&q=80&w=1080" alt="项目1的图片">
+                    </div>
+                    <div class="content">
+                        <h3>项目标题 1</h3>
+                        <p>这里是关于这个项目的简短描述。说明你在这个项目中扮演的角色和主要贡献。</p>
+                        <a href="#" class="btn view-details-btn" data-project="project1">查看详情</a>
+                    </div>
+                    <!-- 隐藏的详细内容 -->
+                    <div class="project-details" style="display: none;">
+                        <img src="https://images.unsplash.com/photo-1555774698-0b77e0abfe3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8dXNlciBpbnRlcmZhY2V8fHx8fHwxNzMyNjQ0ODg3&ixlib=rb-4.0.3&q=80&w=1080" alt="项目1的详细图片">
+                        <h2>项目标题 1</h2>
+                        <p><strong>这里是项目的详细描述。</strong><br><br>你可以详细介绍这个项目的背景、你面临的挑战、你如何解决问题，以及最终取得了什么成果。你可以用 <strong>&lt;br&gt;</strong> 标签来换行。<br><br><strong>我的角色:</strong> UX/UI 设计师, 前端开发者<br><strong>使用技术:</strong> Figma, React, CSS Grid</p>
+                    </div>
+                </div>
+
+                <!-- 项目 2 -->
+                <div class="project-card" id="project2">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1579624269343-415b3a373b30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8cHJvZHVjdCBkZXNpZ258fHx8fHwxNzMyNjQ0OTQy&ixlib=rb-4.0.3&q=80&w=1080" alt="项目2的图片">
+                    </div>
+                     <div class="content">
+                        <h3>项目标题 2</h3>
+                        <p>这里是关于这个项目的简短描述。说明你在这个项目中扮演的角色和主要贡献。</p>
+                        <a href="#" class="btn view-details-btn" data-project="project2">查看详情</a>
+                    </div>
+                    <!-- 隐藏的详细内容 -->
+                    <div class="project-details" style="display: none;">
+                        <img src="https://images.unsplash.com/photo-1579624269343-415b3a373b30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8cHJvZHVjdCBkZXNpZ258fHx8fHwxNzMyNjQ0OTQy&ixlib=rb-4.0.3&q=80&w=1080" alt="项目2的详细图片">
+                        <h2>项目标题 2</h2>
+                        <p>这是第二个项目的详细说明。你可以自由地在这里添加任何你想展示的内容，包括设计思路、客户反馈等。</p>
+                    </div>
+                </div>
+
+                <!-- 项目 3 -->
+                <div class="project-card" id="project3">
+                    <div class="image-container">
+                         <img src="https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2ViIGRlc2lnbnx8fHx8fDE3MzI2NDQ5Nzc&ixlib=rb-4.0.3&q=80&w=1080" alt="项目3的图片">
+                    </div>
+                     <div class="content">
+                        <h3>项目标题 3</h3>
+                        <p>这里是关于这个项目的简短描述。说明你在这个项目中扮演的角色和主要贡献。</p>
+                        <a href="#" class="btn view-details-btn" data-project="project3">查看详情</a>
+                    </div>
+                    <!-- 隐藏的详细内容 -->
+                    <div class="project-details" style="display: none;">
+                        <img src="https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2ViIGRlc2lnbnx8fHx8fDE3MzI2NDQ5Nzc&ixlib=rb-4.0.3&q=80&w=1080" alt="项目3的详细图片">
+                        <h2>项目标题 3</h2>
+                        <p>这是第三个项目的详细说明。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="contact">
+             <h2>联系我</h2>
+            <p>如果您对我的作品感兴趣或有任何合作意向，请随时联系我。我非常期待与您的交流！</p>
+            <ul>
+                <li><a href="mailto:your.email@example.com">邮箱</a></li>
+                <li><a href="https://linkedin.com/in/yourprofile" target="_blank">领英</a></li>
+                <li><a href="#" target="_blank">个人网站</a></li>
+            </ul>
+        </section>
+    </main>
+    
+    <!-- 新增：项目详情弹窗的HTML结构 -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-body">
+                <!-- JavaScript会在这里动态填充内容 -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 [你的名字]. 版权所有.</p>
+    </footer>
+
+    <script>
+        // 滚动动画观察器
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('section').forEach(section => { observer.observe(section); });
+
+        // --- 新增：弹窗交互的JavaScript ---
+        const modal = document.getElementById('project-modal');
+        const modalBody = modal.querySelector('.modal-body');
+        const closeButton = modal.querySelector('.close-button');
+        const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
+
+        // 为每个 "查看详情" 按钮添加点击事件
+        viewDetailsButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const projectId = this.getAttribute('data-project');
+                const projectCard = document.getElementById(projectId);
+                const detailsHtml = projectCard.querySelector('.project-details').innerHTML;
+                
+                modalBody.innerHTML = detailsHtml; // 将隐藏的详细内容复制到弹窗中
+                modal.style.display = 'flex'; // 显示弹窗
+                document.body.classList.add('modal-open'); // 禁止背景滚动
+            });
+        });
+
+        // 关闭弹窗的函数
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            modalBody.innerHTML = ''; // 清空内容
+        }
+
+        // 点击关闭按钮时关闭弹窗
+        closeButton.addEventListener('click', closeModal);
+
+        // 点击弹窗外部（灰色遮罩）时关闭弹窗
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
