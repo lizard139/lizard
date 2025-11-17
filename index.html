@@ -103,15 +103,46 @@
             background: rgba(0, 122, 255, 0.08);
         }
 
+        /* Hero Section with Video Background */
         .hero {
             margin-top: 44px;
-            min-height: 90vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             padding: 60px 22px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 视频背景 */
+        .hero-video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        /* 视频遮罩层 */
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        /* Hero内容 */
+        .hero-content {
+            position: relative;
+            z-index: 1;
         }
         
         .hero h1 {
@@ -120,9 +151,36 @@
             letter-spacing: -0.015em;
             line-height: 1.05;
             margin-bottom: 8px;
-            animation: fadeInUp 0.8s ease forwards;
+            color: #ffffff;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            min-height: 85px;
+        }
+
+        /* 打字机光标 */
+        .typewriter-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 80px;
+            background: #ffffff;
+            margin-left: 8px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
         
+        .hero .tagline {
+            font-size: 28px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.5s forwards;
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -134,18 +192,13 @@
             }
         }
         
-        .hero .tagline {
-            font-size: 28px;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-            animation: fadeInUp 0.8s ease 0.2s backwards;
-        }
-        
         .hero .bio {
             max-width: 600px;
             font-size: 17px;
-            color: var(--text-secondary);
-            animation: fadeInUp 0.8s ease 0.4s backwards;
+            color: #ffffff;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 1s forwards;
         }
 
         section {
@@ -435,7 +488,13 @@
         }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 48px; }
+            .hero h1 { 
+                font-size: 48px; 
+                min-height: 52px;
+            }
+            .typewriter-cursor {
+                height: 48px;
+            }
             .hero .tagline { font-size: 21px; }
             .section-header h2 { font-size: 32px; }
             .nav-links { gap: 20px; }
@@ -464,9 +523,17 @@
 
     <main>
         <section id="about" class="hero">
-            <h1 data-zh="你好，我是 [你的名字]" data-en="Hello, I'm [Your Name]">你好，我是 [你的名字]</h1>
-            <p class="tagline" data-zh="创意设计师 & 开发者" data-en="Creative Designer & Developer">创意设计师 & 开发者</p>
-            <p class="bio" data-zh="致力于创造简洁、优雅且富有影响力的数字体验。" data-en="Dedicated to creating simple, elegant, and impactful digital experiences.">致力于创造简洁、优雅且富有影响力的数字体验。</p>
+            <!-- 视频背景 -->
+            <video class="hero-video-bg" autoplay muted loop playsinline>
+                <source src="https://cdn.coverr.co/videos/coverr-aerial-view-of-a-green-valley-7297/1080p.mp4" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+            
+            <div class="hero-content">
+                <h1 id="typewriterText"></h1>
+                <p class="tagline" data-zh="创意设计师 & 开发者" data-en="Creative Designer & Developer">创意设计师 & 开发者</p>
+                <p class="bio" data-zh="致力于创造简洁、优雅且富有影响力的数字体验。" data-en="Dedicated to creating simple, elegant, and impactful digital experiences.">致力于创造简洁、优雅且富有影响力的数字体验。</p>
+            </div>
         </section>
 
         <section id="portfolio">
@@ -543,6 +610,55 @@
     <script>
         let currentLang = 'zh';
 
+        // 打字机效果
+        const texts = {
+            zh: ['你好，我是 [你的名字]', '欢迎来到我的作品集', '让我们一起创造精彩'],
+            en: ['Hello, I\'m [Your Name]', 'Welcome to My Portfolio', 'Let\'s Create Something Amazing']
+        };
+        
+        let textIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typewriterDelay = 100;
+
+        function typeWriter() {
+            const currentTexts = texts[currentLang];
+            const currentText = currentTexts[textIndex];
+            const textElement = document.getElementById('typewriterText');
+            
+            if (!isDeleting) {
+                textElement.innerHTML = currentText.substring(0, charIndex) + '<span class="typewriter-cursor"></span>';
+                charIndex++;
+                
+                if (charIndex > currentText.length) {
+                    isDeleting = true;
+                    typewriterDelay = 2000; // 停留2秒
+                } else {
+                    typewriterDelay = 100;
+                }
+            } else {
+                textElement.innerHTML = currentText.substring(0, charIndex) + '<span class="typewriter-cursor"></span>';
+                charIndex--;
+                
+                if (charIndex === 0) {
+                    isDeleting = false;
+                    textIndex = (textIndex + 1) % currentTexts.length;
+                    typewriterDelay = 500;
+                } else {
+                    typewriterDelay = 50;
+                }
+            }
+            
+            setTimeout(typeWriter, typewriterDelay);
+        }
+
+        // 页面加载时启动打字机效果
+        window.addEventListener('DOMContentLoaded', () => {
+            typeWriter();
+            const saved = localStorage.getItem('preferredLanguage');
+            if (saved && saved !== currentLang) toggleLanguage();
+        });
+
         function toggleLanguage() {
             currentLang = currentLang === 'zh' ? 'en' : 'zh';
             document.querySelector('.lang-switch').textContent = currentLang === 'zh' ? 'EN' : '中文';
@@ -556,13 +672,13 @@
                 }
             });
             
+            // 重置打字机
+            charIndex = 0;
+            textIndex = 0;
+            isDeleting = false;
+            
             localStorage.setItem('preferredLanguage', currentLang);
         }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const saved = localStorage.getItem('preferredLanguage');
-            if (saved && saved !== currentLang) toggleLanguage();
-        });
 
         const projectData = {
             project1: {
