@@ -36,6 +36,8 @@
             background-color: var(--background-light);
             color: var(--text-primary);
             line-height: 1.6;
+            margin: 0;
+            padding: 0;
         }
         
         body.modal-open {
@@ -103,9 +105,10 @@
             background: rgba(0, 122, 255, 0.08);
         }
 
-        /* Hero Section with Animated Gradient Background */
+        /* Hero Section - 填满整个宽度 */
         .hero {
             margin-top: 44px;
+            width: 100%;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -120,7 +123,6 @@
             animation: gradientShift 15s ease infinite;
         }
 
-        /* 动态渐变动画 */
         @keyframes gradientShift {
             0% {
                 background-position: 0% 50%;
@@ -133,7 +135,6 @@
             }
         }
 
-        /* 添加景深效果的图层 */
         .hero::before {
             content: '';
             position: absolute;
@@ -156,10 +157,10 @@
             }
         }
 
-        /* Hero内容 */
         .hero-content {
             position: relative;
             z-index: 1;
+            max-width: 980px;
         }
         
         .hero h1 {
@@ -173,7 +174,6 @@
             min-height: 85px;
         }
 
-        /* 打字机光标 */
         .typewriter-cursor {
             display: inline-block;
             width: 3px;
@@ -218,7 +218,8 @@
             animation: fadeInUp 0.8s ease 1s forwards;
         }
 
-        section {
+        /* 其他 Section - 保持居中 */
+        section:not(.hero) {
             max-width: 980px;
             margin: 0 auto;
             padding: 100px 22px;
@@ -324,7 +325,6 @@
             transform: translateX(4px);
         }
 
-        /* 弹窗样式 */
         .modal {
             display: none;
             position: fixed;
@@ -515,7 +515,8 @@
             .hero .tagline { font-size: 21px; }
             .section-header h2 { font-size: 32px; }
             .nav-links { gap: 20px; }
-            nav, section { padding-left: 16px; padding-right: 16px; }
+            nav { padding: 0 16px; }
+            section:not(.hero) { padding: 60px 16px; }
             .modal-body { padding: 32px 24px; }
             .modal-header h1 { font-size: 28px; }
             .modal-close { top: 20px; right: 20px; }
