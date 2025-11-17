@@ -105,7 +105,6 @@
             background: rgba(0, 122, 255, 0.08);
         }
 
-        /* Hero Section - 填满整个宽度 */
         .hero {
             margin-top: 44px;
             width: 100%;
@@ -124,15 +123,9 @@
         }
 
         @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .hero::before {
@@ -149,12 +142,8 @@
         }
 
         @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0);
-            }
-            50% {
-                transform: translate(30px, -30px);
-            }
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
         }
 
         .hero-content {
@@ -218,7 +207,6 @@
             animation: fadeInUp 0.8s ease 1s forwards;
         }
 
-        /* 其他 Section - 保持居中 */
         section:not(.hero) {
             max-width: 980px;
             margin: 0 auto;
@@ -354,7 +342,7 @@
         .modal-content {
             background: var(--background-light);
             border-radius: 24px;
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
@@ -432,6 +420,33 @@
         .modal-meta span:not(:last-child)::after {
             content: '·';
             margin-left: 16px;
+        }
+
+        /* 9:16 竖屏图片展示区域 */
+        .modal-screenshots {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .screenshot-frame {
+            position: relative;
+            width: 100%;
+            padding-top: 177.78%; /* 9:16 比例 = 16/9 * 100% */
+            background: var(--background-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .screenshot-frame img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .modal-section {
@@ -522,6 +537,10 @@
             .modal-close { top: 20px; right: 20px; }
             .modal-hero-image { height: 250px; }
             #contact { padding: 60px 24px; }
+            .modal-screenshots {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
         }
     </style>
 </head>
@@ -609,6 +628,10 @@
                     <h1 id="modalTitle"></h1>
                     <div class="modal-meta" id="modalMeta"></div>
                 </div>
+                
+                <!-- 9:16 竖屏图片展示 -->
+                <div class="modal-screenshots" id="modalScreenshots"></div>
+                
                 <div id="modalSections"></div>
             </div>
         </div>
@@ -622,8 +645,8 @@
         let currentLang = 'zh';
 
         const texts = {
-            zh: ['你好，欢迎来到我的作品集', '让我们一起创造精彩'],
-            en: ['Hello,Welcome to My Portfolio', 'Let\'s Create Something Amazing']
+            zh: ['你好，我是 [你的名字]', '欢迎来到我的作品集', '让我们一起创造精彩'],
+            en: ['Hello, I\'m [Your Name]', 'Welcome to My Portfolio', 'Let\'s Create Something Amazing']
         };
         
         let textIndex = 0;
@@ -694,6 +717,10 @@
                     title: "任务管理应用",
                     meta: ["UX/UI 设计", "2024", "Figma · React"],
                     image: "https://images.unsplash.com/photo-1555774698-0b77e0abfe3d?w=800",
+                    screenshots: [
+                        "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400",
+                        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400"
+                    ],
                     sections: [
                         { title: "项目背景", content: "这个项目是为一家快速成长的初创公司设计的移动应用。客户希望打造一款能够帮助用户高效管理日常任务的应用，同时具有现代化的视觉设计和流畅的用户体验。" },
                         {
@@ -711,6 +738,10 @@
                     title: "Task Management App",
                     meta: ["UX/UI Design", "2024", "Figma · React"],
                     image: "https://images.unsplash.com/photo-1555774698-0b77e0abfe3d?w=800",
+                    screenshots: [
+                        "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400",
+                        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400"
+                    ],
                     sections: [
                         { title: "Background", content: "This mobile app was designed for a rapidly growing startup. The client wanted an app to help users efficiently manage daily tasks with modern visual design and smooth UX." },
                         {
@@ -730,6 +761,10 @@
                     title: "电商平台重构",
                     meta: ["产品设计", "2024", "Sketch · Adobe XD"],
                     image: "https://images.unsplash.com/photo-1579624269343-415b3a373b30?w=800",
+                    screenshots: [
+                        "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400",
+                        "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400"
+                    ],
                     sections: [
                         { title: "项目概述", content: "这是一个电商平台的全面重构项目。原有平台的购物流程繁琐，用户流失率高达45%。" },
                         { title: "用户研究", content: "通过对200+用户的深度访谈和数据分析，发现用户在结账环节的流失率最高，主要原因是步骤过多且信息输入重复。" },
@@ -741,6 +776,10 @@
                     title: "E-commerce Redesign",
                     meta: ["Product Design", "2024", "Sketch · Adobe XD"],
                     image: "https://images.unsplash.com/photo-1579624269343-415b3a373b30?w=800",
+                    screenshots: [
+                        "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400",
+                        "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400"
+                    ],
                     sections: [
                         { title: "Overview", content: "A comprehensive redesign of an e-commerce platform. The original platform had a cumbersome process with 45% user drop-off rate." },
                         { title: "Research", content: "Through interviews with 200+ users and data analysis, we found highest drop-off during checkout due to too many steps and repetitive input." },
@@ -754,6 +793,10 @@
                     title: "企业官网设计",
                     meta: ["Web 设计", "2023", "Vue.js · Tailwind"],
                     image: "https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?w=800",
+                    screenshots: [
+                        "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=400",
+                        "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=400"
+                    ],
                     sections: [
                         { title: "项目背景", content: "为一家科技公司设计并开发全新的企业官网。客户需要一个既能展示技术实力，又能吸引潜在客户的现代化网站。" },
                         { title: "技术架构", content: "采用Vue.js 3和TypeScript构建，使用Tailwind CSS实现响应式设计。集成Headless CMS方便内容管理。" },
@@ -771,6 +814,10 @@
                     title: "Corporate Website",
                     meta: ["Web Design", "2023", "Vue.js · Tailwind"],
                     image: "https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?w=800",
+                    screenshots: [
+                        "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=400",
+                        "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=400"
+                    ],
                     sections: [
                         { title: "Background", content: "Designed and developed a new corporate website for a tech company. The client needed a modern site showcasing technical expertise while attracting potential clients." },
                         { title: "Architecture", content: "Built with Vue.js 3 and TypeScript, using Tailwind CSS for responsive design. Integrated Headless CMS for easy content management." },
@@ -795,6 +842,13 @@
             document.getElementById('modalTitle').textContent = data.title;
             document.getElementById('modalMeta').innerHTML = data.meta.map(m => `<span>${m}</span>`).join('');
             
+            // 添加竖屏截图
+            const screenshotsHtml = data.screenshots.map(url => 
+                `<div class="screenshot-frame"><img src="${url}" alt="截图"></div>`
+            ).join('');
+            document.getElementById('modalScreenshots').innerHTML = screenshotsHtml;
+            
+            // 添加文本内容
             let html = '';
             data.sections.forEach(s => {
                 html += `<div class="modal-section"><h2>${s.title}</h2>`;
@@ -827,4 +881,3 @@
     </script>
 </body>
 </html>
-
