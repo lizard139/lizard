@@ -422,63 +422,84 @@
             margin-left: 16px;
         }
 
-        /* 图片轮播容器 - 2:3比例 */
+        /* 摄影分类展示 */
+        .photo-category {
+            margin-bottom: 48px;
+        }
+
+        .category-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        /* 轮播容器 - 2:3比例，每次显示2张 */
         .carousel-container {
             position: relative;
             width: 100%;
-            margin: 32px 0;
+            margin-bottom: 24px;
         }
 
         .carousel-wrapper {
             position: relative;
             width: 100%;
-            padding-top: 150%; /* 3/2 * 100% = 150% 实现2:3比例 */
-            background: var(--background-subtle);
-            border-radius: 16px;
             overflow: hidden;
+            border-radius: 16px;
         }
 
         .carousel-track {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             display: flex;
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .carousel-slide {
             min-width: 100%;
-            height: 100%;
-            position: relative;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 0;
         }
 
-        .carousel-slide img {
+        .photo-item {
+            position: relative;
+            width: 100%;
+            padding-top: 150%; /* 2:3 比例 = 3/2 * 100% */
+            background: var(--background-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .photo-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .carousel-caption {
+        .photo-caption {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 24px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            padding: 16px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
             color: white;
         }
 
-        .carousel-caption h3 {
-            font-size: 18px;
+        .photo-caption h4 {
+            font-size: 15px;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
-        .carousel-caption p {
-            font-size: 14px;
+        .photo-caption p {
+            font-size: 13px;
             opacity: 0.9;
+            margin: 0;
         }
 
         /* 轮播控制按钮 */
@@ -508,11 +529,11 @@
         }
 
         .carousel-btn.prev {
-            left: 16px;
+            left: -22px;
         }
 
         .carousel-btn.next {
-            right: 16px;
+            right: -22px;
         }
 
         /* 轮播指示器 */
@@ -536,15 +557,6 @@
             background: var(--primary-color);
             width: 24px;
             border-radius: 4px;
-        }
-
-        /* 滑动提示 */
-        .swipe-hint {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-top: 12px;
-            opacity: 0.8;
         }
 
         .modal-screenshots {
@@ -699,13 +711,16 @@
             .contact-grid {
                 grid-template-columns: 1fr;
             }
+            .carousel-slide {
+                grid-template-columns: 1fr;
+            }
             .carousel-btn {
                 width: 36px;
                 height: 36px;
                 font-size: 16px;
             }
-            .carousel-btn.prev { left: 8px; }
-            .carousel-btn.next { right: 8px; }
+            .carousel-btn.prev { left: -18px; }
+            .carousel-btn.next { right: -18px; }
         }
     </style>
 </head>
@@ -777,7 +792,7 @@
                     </div>
                     <div class="content">
                         <h3 data-zh="数据可视化平台" data-en="Data Visualization Platform">数据可视化平台</h3>
-                        <p data-zh="为企业打造的智能数据分析与可视化系统。" data-en="Intelligent data analysis and visualization system for enterprises.">为企业打造的智能数据分析与可视化系统。</p>
+                        <p data-zh="为企业打造的智能数据分析与可视化系统。" data-en="Intelligent data analysis and visualization system.">为企业打造的智能数据分析与可视化系统。</p>
                         <button class="btn" onclick="openModal('project4')" data-zh="了解更多" data-en="Learn more">了解更多</button>
                     </div>
                 </div>
@@ -823,22 +838,8 @@
                     <div class="modal-meta" id="modalMeta"></div>
                 </div>
                 
-                <!-- 图片轮播（仅摄影项目使用） -->
-                <div id="carouselSection" style="display: none;">
-                    <div class="carousel-container">
-                        <div class="carousel-wrapper">
-                            <div class="carousel-track" id="carouselTrack"></div>
-                            <button class="carousel-btn prev" onclick="prevSlide()">‹</button>
-                            <button class="carousel-btn next" onclick="nextSlide()">›</button>
-                        </div>
-                        <div class="carousel-indicators" id="carouselIndicators"></div>
-                        <p class="swipe-hint" data-zh="← 滑动查看更多作品 →" data-en="← Swipe to view more →">← 滑动查看更多作品 →</p>
-                    </div>
-                </div>
-                
-                <!-- 普通截图（其他项目使用） -->
+                <div id="photoGallery"></div>
                 <div class="modal-screenshots" id="modalScreenshots"></div>
-                
                 <div id="modalSections"></div>
             </div>
         </div>
@@ -850,8 +851,7 @@
 
     <script>
         let currentLang = 'zh';
-        let currentSlide = 0;
-        let totalSlides = 0;
+        let carouselStates = {};
 
         const texts = {
             zh: ['你好，我是 [你的名字]', '欢迎来到我的作品集', '让我们一起创造精彩'],
@@ -931,9 +931,9 @@
                         "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400"
                     ],
                     sections: [
-                        { title: "项目背景", content: "这个项目是为一家快速成长的初创公司设计的移动应用。" },
-                        { title: "解决方案", content: "我采用了卡片式布局和渐进式信息展示策略。" },
-                        { title: "项目成果", content: "用户留存率提升了40%，日活跃用户突破10万。" }
+                        { title: "项目背景", content: "为初创公司设计的移动应用。" },
+                        { title: "解决方案", content: "采用卡片式布局和渐进式信息展示。" },
+                        { title: "项目成果", content: "用户留存率提升40%。" }
                     ]
                 },
                 en: {
@@ -945,9 +945,9 @@
                         "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400"
                     ],
                     sections: [
-                        { title: "Background", content: "Mobile app designed for a rapidly growing startup." },
-                        { title: "Solution", content: "Adopted card-based layout with progressive disclosure." },
-                        { title: "Results", content: "40% retention increase, 100K daily active users." }
+                        { title: "Background", content: "Mobile app for startups." },
+                        { title: "Solution", content: "Card-based layout with progressive disclosure." },
+                        { title: "Results", content: "40% retention increase." }
                     ]
                 }
             },
@@ -961,9 +961,9 @@
                         "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400"
                     ],
                     sections: [
-                        { title: "项目概述", content: "全面重构电商平台，用户流失率高达45%。" },
-                        { title: "设计策略", content: "将结账流程从5步简化为3步。" },
-                        { title: "业务影响", content: "转化率提升65%，订单价值增加35%。" }
+                        { title: "项目概述", content: "全面重构电商平台。" },
+                        { title: "设计策略", content: "结账流程从5步简化为3步。" },
+                        { title: "业务影响", content: "转化率提升65%。" }
                     ]
                 },
                 en: {
@@ -975,9 +975,9 @@
                         "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400"
                     ],
                     sections: [
-                        { title: "Overview", content: "Redesign with 45% drop-off rate." },
+                        { title: "Overview", content: "Comprehensive redesign." },
                         { title: "Strategy", content: "Simplified checkout from 5 to 3 steps." },
-                        { title: "Impact", content: "65% conversion increase, 35% higher AOV." }
+                        { title: "Impact", content: "65% conversion increase." }
                     ]
                 }
             },
@@ -986,122 +986,104 @@
                     title: "摄影作品集",
                     meta: ["商业摄影", "2024", "产品 · 人文 · 风光"],
                     image: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800",
-                    carousel: [
+                    categories: [
                         {
-                            url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600",
-                            title: "产品摄影",
-                            caption: "Apple Watch Series 8 - 精致细节呈现"
+                            name: "产品摄影",
+                            photos: [
+                                { url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600", title: "Apple Watch Series 8", caption: "精致细节呈现" },
+                                { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600", title: "运动耳机", caption: "动感视觉" },
+                                { url: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=600", title: "香水瓶", caption: "光影艺术" },
+                                { url: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600", title: "运动鞋", caption: "质感表现" }
+                            ]
                         },
                         {
-                            url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",
-                            title: "产品摄影",
-                            caption: "运动耳机 - 动感视觉"
+                            name: "人文摄影",
+                            photos: [
+                                { url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600", title: "街头艺术家", caption: "专注时刻" },
+                                { url: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?w=600", title: "都市生活", caption: "人潮涌动" },
+                                { url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600", title: "老街故事", caption: "岁月痕迹" },
+                                { url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600", title: "肖像写真", caption: "情感捕捉" }
+                            ]
                         },
                         {
-                            url: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=600",
-                            title: "产品摄影",
-                            caption: "香水瓶 - 光影艺术"
-                        },
-                        {
-                            url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600",
-                            title: "人文摄影",
-                            caption: "街头艺术家 - 专注时刻"
-                        },
-                        {
-                            url: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?w=600",
-                            title: "人文摄影",
-                            caption: "都市生活 - 人潮涌动"
-                        },
-                        {
-                            url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600",
-                            title: "风光摄影",
-                            caption: "挪威峡湾 - 壮丽山河"
-                        },
-                        {
-                            url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600",
-                            title: "风光摄影",
-                            caption: "日落时分 - 金色余晖"
+                            name: "风光摄影",
+                            photos: [
+                                { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600", title: "挪威峡湾", caption: "壮丽山河" },
+                                { url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600", title: "日落时分", caption: "金色余晖" },
+                                { url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600", title: "森林晨雾", caption: "静谧氛围" },
+                                { url: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600", title: "湖光山色", caption: "自然之美" }
+                            ]
                         }
                     ],
                     sections: [
-                        { title: "作品说明", content: "专注于商业摄影领域，涵盖产品摄影、人文纪实、风光摄影等多个方向。" },
-                        { title: "拍摄理念", content: "追求光影与构图的完美平衡，用镜头记录每个精彩瞬间，传递情感与故事。" }
+                        { title: "作品说明", content: "专注于商业摄影领域，涵盖产品摄影、人文纪实、风光摄影等多个方向。" }
                     ]
                 },
                 en: {
                     title: "Photography Portfolio",
                     meta: ["Commercial Photography", "2024", "Product · Portrait · Landscape"],
                     image: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800",
-                    carousel: [
+                    categories: [
                         {
-                            url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600",
-                            title: "Product Photography",
-                            caption: "Apple Watch Series 8 - Fine Details"
+                            name: "Product Photography",
+                            photos: [
+                                { url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600", title: "Apple Watch Series 8", caption: "Fine Details" },
+                                { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600", title: "Sports Headphones", caption: "Dynamic Visual" },
+                                { url: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=600", title: "Perfume Bottle", caption: "Light & Shadow" },
+                                { url: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600", title: "Sneakers", caption: "Texture" }
+                            ]
                         },
                         {
-                            url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",
-                            title: "Product Photography",
-                            caption: "Sports Headphones - Dynamic Visual"
+                            name: "Portrait Photography",
+                            photos: [
+                                { url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600", title: "Street Artist", caption: "Focused Moment" },
+                                { url: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?w=600", title: "Urban Life", caption: "Crowded Streets" },
+                                { url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600", title: "Old Street", caption: "Time Traces" },
+                                { url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600", title: "Portrait", caption: "Emotion Capture" }
+                            ]
                         },
                         {
-                            url: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=600",
-                            title: "Product Photography",
-                            caption: "Perfume Bottle - Light & Shadow"
-                        },
-                        {
-                            url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600",
-                            title: "Portrait Photography",
-                            caption: "Street Artist - Focused Moment"
-                        },
-                        {
-                            url: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?w=600",
-                            title: "Portrait Photography",
-                            caption: "Urban Life - Crowded Streets"
-                        },
-                        {
-                            url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600",
-                            title: "Landscape Photography",
-                            caption: "Norwegian Fjords - Majestic Mountains"
-                        },
-                        {
-                            url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600",
-                            title: "Landscape Photography",
-                            caption: "Sunset Moment - Golden Glow"
+                            name: "Landscape Photography",
+                            photos: [
+                                { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600", title: "Norwegian Fjords", caption: "Majestic Mountains" },
+                                { url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600", title: "Sunset", caption: "Golden Glow" },
+                                { url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600", title: "Forest Mist", caption: "Serene Atmosphere" },
+                                { url: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600", title: "Lake View", caption: "Natural Beauty" }
+                            ]
                         }
                     ],
                     sections: [
-                        { title: "About", content: "Focused on commercial photography including product, portrait, and landscape photography." },
-                        { title: "Philosophy", content: "Pursuing perfect balance of light and composition, capturing moments and telling stories through lens." }
+                        { title: "About", content: "Focused on commercial photography including product, portrait, and landscape." }
                     ]
                 }
             },
             project4: {
                 zh: {
                     title: "数据可视化平台",
-                    meta: ["全栈开发", "2024", "React · D3.js · Node.js"],
+                    meta: ["全栈开发", "2024", "React · D3.js"],
                     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
                     screenshots: [
                         "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400",
                         "https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400"
                     ],
                     sections: [
-                        { title: "项目背景", content: "为大型企业开发的数据分析与可视化平台。" },
-                        { title: "技术亮点", content: "使用D3.js实现复杂数据可视化，支持百万级数据处理。" },
-                        { title: "项目成果", content: "提升数据分析效率80%，处理TB级数据。" }
+                        { title: "项目背景", content: "为企业开发的数据分析平台。" },
+                        { title: "技术亮点", content: "使用D3.js实现复杂数据可视化。" },
+                        { title: "项目成果", content: "提升分析效率80%。" }
                     ]
                 },
                 en: {
-                    title: "Data Visualization Platform",
-                    meta: ["Full-stack Dev", "2024", "React · D3.js · Node.js"],
+                    title: "Data Visualization",
+                    meta: ["Full-stack Dev", "2024", "React · D3.js"],
                     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
                     screenshots: [
                         "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400",
                         "https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400"
                     ],
                     sections: [
-                        { title: "Background", content: "Data analysis platform for large enterprises." },
-                        { title: "Highlights", content: "Complex visualizations with D3.js, handling millions of data points." },
-                        { title: "Results", content: "80% efficiency improvement, processing TB-level data." }
+                        { title: "Background", content: "Data analysis platform for enterprises." },
+                        { title: "Highlights", content: "Complex visualizations with D3.js." },
+                        { title: "Results", content: "80% efficiency improvement." }
                     ]
                 }
             }
@@ -1115,36 +1097,72 @@
             document.getElementById('modalTitle').textContent = data.title;
             document.getElementById('modalMeta').innerHTML = data.meta.map(m => `<span>${m}</span>`).join('');
             
-            // 检查是否是摄影项目（project3）
-            if (data.carousel) {
-                // 显示轮播，隐藏截图
-                document.getElementById('carouselSection').style.display = 'block';
-                document.getElementById('modalScreenshots').style.display = 'none';
+            const photoGallery = document.getElementById('photoGallery');
+            const screenshots = document.getElementById('modalScreenshots');
+            
+            if (data.categories) {
+                photoGallery.style.display = 'block';
+                screenshots.style.display = 'none';
+                photoGallery.innerHTML = '';
+                carouselStates = {};
                 
-                // 初始化轮播
-                initCarousel(data.carousel);
+                data.categories.forEach((category, catIndex) => {
+                    const slides = [];
+                    for (let i = 0; i < category.photos.length; i += 2) {
+                        slides.push(category.photos.slice(i, i + 2));
+                    }
+                    
+                    carouselStates[catIndex] = { current: 0, total: slides.length };
+                    
+                    const categoryHtml = `
+                        <div class="photo-category">
+                            <h3 class="category-title">${category.name}</h3>
+                            <div class="carousel-container">
+                                <div class="carousel-wrapper">
+                                    <div class="carousel-track" id="track-${catIndex}">
+                                        ${slides.map(slide => `
+                                            <div class="carousel-slide">
+                                                ${slide.map(photo => `
+                                                    <div class="photo-item">
+                                                        <img src="${photo.url}" alt="${photo.title}">
+                                                        <div class="photo-caption">
+                                                            <h4>${photo.title}</h4>
+                                                            <p>${photo.caption}</p>
+                                                        </div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    ${slides.length > 1 ? `
+                                        <button class="carousel-btn prev" onclick="prevSlide(${catIndex})">‹</button>
+                                        <button class="carousel-btn next" onclick="nextSlide(${catIndex})">›</button>
+                                    ` : ''}
+                                </div>
+                                ${slides.length > 1 ? `
+                                    <div class="carousel-indicators" id="indicators-${catIndex}">
+                                        ${slides.map((_, i) => `
+                                            <div class="carousel-indicator ${i === 0 ? 'active' : ''}" onclick="goToSlide(${catIndex}, ${i})"></div>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    photoGallery.innerHTML += categoryHtml;
+                });
             } else {
-                // 显示截图，隐藏轮播
-                document.getElementById('carouselSection').style.display = 'none';
-                document.getElementById('modalScreenshots').style.display = 'grid';
-                
-                // 渲染截图
-                const screenshotsHtml = data.screenshots.map(url => 
+                photoGallery.style.display = 'none';
+                screenshots.style.display = 'grid';
+                screenshots.innerHTML = data.screenshots.map(url => 
                     `<div class="screenshot-frame"><img src="${url}" alt="截图"></div>`
                 ).join('');
-                document.getElementById('modalScreenshots').innerHTML = screenshotsHtml;
             }
             
-            // 渲染文本内容
             let html = '';
             data.sections.forEach(s => {
                 html += `<div class="modal-section"><h2>${s.title}</h2>`;
                 if (s.content) html += `<p>${s.content}</p>`;
-                if (s.subsections) {
-                    s.subsections.forEach(sub => {
-                        html += `<h3>${sub.subtitle}</h3><p>${sub.text}</p>`;
-                    });
-                }
                 html += `</div>`;
             });
             document.getElementById('modalSections').innerHTML = html;
@@ -1153,75 +1171,34 @@
             document.body.classList.add('modal-open');
         }
 
-        function initCarousel(images) {
-            currentSlide = 0;
-            totalSlides = images.length;
+        function nextSlide(catIndex) {
+            const state = carouselStates[catIndex];
+            state.current = (state.current + 1) % state.total;
+            updateCarousel(catIndex);
+        }
+
+        function prevSlide(catIndex) {
+            const state = carouselStates[catIndex];
+            state.current = (state.current - 1 + state.total) % state.total;
+            updateCarousel(catIndex);
+        }
+
+        function goToSlide(catIndex, slideIndex) {
+            carouselStates[catIndex].current = slideIndex;
+            updateCarousel(catIndex);
+        }
+
+        function updateCarousel(catIndex) {
+            const state = carouselStates[catIndex];
+            const track = document.getElementById(`track-${catIndex}`);
+            const indicators = document.getElementById(`indicators-${catIndex}`);
             
-            // 生成轮播图片
-            const trackHtml = images.map(img => `
-                <div class="carousel-slide">
-                    <img src="${img.url}" alt="${img.title}">
-                    <div class="carousel-caption">
-                        <h3>${img.title}</h3>
-                        <p>${img.caption}</p>
-                    </div>
-                </div>
-            `).join('');
-            document.getElementById('carouselTrack').innerHTML = trackHtml;
+            track.style.transform = `translateX(-${state.current * 100}%)`;
             
-            // 生成指示器
-            const indicatorsHtml = images.map((_, index) => 
-                `<div class="carousel-indicator ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></div>`
-            ).join('');
-            document.getElementById('carouselIndicators').innerHTML = indicatorsHtml;
-            
-            updateCarousel();
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            updateCarousel();
-        }
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-            updateCarousel();
-        }
-
-        function goToSlide(index) {
-            currentSlide = index;
-            updateCarousel();
-        }
-
-        function updateCarousel() {
-            const track = document.getElementById('carouselTrack');
-            track.style.transform = `translateX(-${currentSlide * 100}%)`;
-            
-            // 更新指示器
-            document.querySelectorAll('.carousel-indicator').forEach((indicator, index) => {
-                indicator.classList.toggle('active', index === currentSlide);
-            });
-        }
-
-        // 触摸滑动支持
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        document.getElementById('projectModal').addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
-        document.getElementById('projectModal').addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        });
-
-        function handleSwipe() {
-            if (touchEndX < touchStartX - 50) {
-                nextSlide();
-            }
-            if (touchEndX > touchStartX + 50) {
-                prevSlide();
+            if (indicators) {
+                indicators.querySelectorAll('.carousel-indicator').forEach((ind, i) => {
+                    ind.classList.toggle('active', i === state.current);
+                });
             }
         }
 
@@ -1236,8 +1213,6 @@
 
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeModal();
-            if (e.key === 'ArrowLeft') prevSlide();
-            if (e.key === 'ArrowRight') nextSlide();
         });
     </script>
 </body>
