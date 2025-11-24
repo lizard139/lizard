@@ -422,7 +422,6 @@
             margin-left: 16px;
         }
 
-        /* 摄影分类展示 */
         .photo-category {
             margin-bottom: 48px;
         }
@@ -434,12 +433,11 @@
             color: var(--text-primary);
         }
 
-        /* 轮播容器 */
         .carousel-container {
             position: relative;
             width: 100%;
             margin-bottom: 16px;
-            padding: 0 60px; /* 为按钮留出空间 */
+            padding: 0 60px;
         }
 
         .carousel-wrapper {
@@ -462,10 +460,11 @@
             padding: 0;
         }
 
+        /* 普通单图 - 2:3 比例 */
         .photo-item {
             position: relative;
             width: 100%;
-            padding-top: 150%; /* 2:3 比例 */
+            padding-top: 150%;
             background: var(--background-subtle);
             border-radius: 12px;
             overflow: hidden;
@@ -473,6 +472,34 @@
         }
 
         .photo-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 双横图容器 - 上下堆叠 */
+        .photo-item-double {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .photo-item-double .photo-half {
+            position: relative;
+            width: 100%;
+            padding-top: 66.67%; /* 3:2 比例 = 2/3 * 100% */
+            background: var(--background-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .photo-item-double .photo-half img {
             position: absolute;
             top: 0;
             left: 0;
@@ -503,7 +530,6 @@
             margin: 0;
         }
 
-        /* 轮播控制按钮 - 修改位置避免被遮挡 */
         .carousel-btn {
             position: absolute;
             top: 50%;
@@ -970,30 +996,57 @@
                         {
                             name: "产品摄影",
                             photos: [
-                                { url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600", title: "Apple Watch Series 8", caption: "精致细节呈现" },
-                                { type: "double",  // ← 标记为双图
-                                 photos: [{url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",title: "运动耳机 - 上",caption: "动感视觉"},{url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",title: "运动耳机 - 下",caption: "细节展示"}]}，
-
-                                { url: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=600", title: "香水瓶", caption: "光影艺术" },
-                                { url: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600", title: "运动鞋", caption: "质感表现" }
+                                { 
+                                    url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600", 
+                                    title: "Apple Watch Series 8", 
+                                    caption: "精致细节呈现",
+                                    type: "single"  // 单图
+                                },
+                                { 
+                                    type: "double",  // ← 这是上下两张横图
+                                    photos: [
+                                        {
+                                            url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",
+                                            title: "运动耳机 - 上",
+                                            caption: "动感视觉"
+                                        },
+                                        {
+                                            url: "https://images.unsplash.com/photo-1505740106531-4243f3831c78?w=600",
+                                            title: "运动耳机 - 下",
+                                            caption: "细节展示"
+                                        }
+                                    ]
+                                },
+                                { 
+                                    url: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=600", 
+                                    title: "香水瓶", 
+                                    caption: "光影艺术",
+                                    type: "single"
+                                },
+                                { 
+                                    url: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600", 
+                                    title: "运动鞋", 
+                                    caption: "质感表现",
+                                    type: "single"
+                                }
                             ]
                         },
                         {
                             name: "人文摄影",
                             photos: [
-                                { url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600", title: "街头艺术家", caption: "专注时刻" },
-                                { url: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?w=600", title: "都市生活", caption: "人潮涌动" },
-                                { url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600", title: "老街故事", caption: "岁月痕迹" },
-                                { url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600", title: "肖像写真", caption: "情感捕捉" }
+                                { url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600", title: "街头艺术家", caption: "专注时刻", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?w=600", title: "都市生活", caption: "人潮涌动", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600", title: "老街故事", caption: "岁月痕迹", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600", title: "肖像写真", caption: "情感捕捉", type: "single" }
                             ]
                         },
                         {
                             name: "风光摄影",
                             photos: [
-                                { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600", title: "挪威峡湾", caption: "壮丽山河" },
-                                { url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600", title: "日落时分", caption: "金色余晖" },
-                                { url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600", title: "森林晨雾", caption: "静谧氛围" },
-                                { url: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600", title: "湖光山色", caption: "自然之美" }
+                                { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600", title: "挪威峡湾", caption: "壮丽山河", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600", title: "日落时分", caption: "金色余晖", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600", title: "森林晨雾", caption: "静谧氛围", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600", title: "湖光山色", caption: "自然之美", type: "single" }
                             ]
                         }
                     ],
@@ -1009,28 +1062,34 @@
                         {
                             name: "Product Photography",
                             photos: [
-                                { url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600", title: "Apple Watch Series 8", caption: "Fine Details" },
-                                { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600", title: "Sports Headphones", caption: "Dynamic Visual" },
-                                { url: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=600", title: "Perfume Bottle", caption: "Light & Shadow" },
-                                { url: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600", title: "Sneakers", caption: "Texture" }
+                                { url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600", title: "Apple Watch Series 8", caption: "Fine Details", type: "single" },
+                                { 
+                                    type: "double",
+                                    photos: [
+                                        { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600", title: "Headphones - Top", caption: "Dynamic Visual" },
+                                        { url: "https://images.unsplash.com/photo-1505740106531-4243f3831c78?w=600", title: "Headphones - Bottom", caption: "Detail View" }
+                                    ]
+                                },
+                                { url: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=600", title: "Perfume Bottle", caption: "Light & Shadow", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600", title: "Sneakers", caption: "Texture", type: "single" }
                             ]
                         },
                         {
                             name: "Portrait Photography",
                             photos: [
-                                { url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600", title: "Street Artist", caption: "Focused Moment" },
-                                { url: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?w=600", title: "Urban Life", caption: "Crowded Streets" },
-                                { url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600", title: "Old Street", caption: "Time Traces" },
-                                { url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600", title: "Portrait", caption: "Emotion Capture" }
+                                { url: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600", title: "Street Artist", caption: "Focused Moment", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1496412705862-e0088f16f791?w=600", title: "Urban Life", caption: "Crowded Streets", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600", title: "Old Street", caption: "Time Traces", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600", title: "Portrait", caption: "Emotion Capture", type: "single" }
                             ]
                         },
                         {
                             name: "Landscape Photography",
                             photos: [
-                                { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600", title: "Norwegian Fjords", caption: "Majestic Mountains" },
-                                { url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600", title: "Sunset", caption: "Golden Glow" },
-                                { url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600", title: "Forest Mist", caption: "Serene Atmosphere" },
-                                { url: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600", title: "Lake View", caption: "Natural Beauty" }
+                                { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600", title: "Norwegian Fjords", caption: "Majestic Mountains", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600", title: "Sunset", caption: "Golden Glow", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600", title: "Forest Mist", caption: "Serene Atmosphere", type: "single" },
+                                { url: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600", title: "Lake View", caption: "Natural Beauty", type: "single" }
                             ]
                         }
                     ],
@@ -1104,15 +1163,33 @@
                                     <div class="carousel-track" id="track-${catIndex}">
                                         ${slides.map(slide => `
                                             <div class="carousel-slide">
-                                                ${slide.map(photo => `
-                                                    <div class="photo-item">
-                                                        <img src="${photo.url}" alt="${photo.title}">
-                                                        <div class="photo-caption">
-                                                            <h4>${photo.title}</h4>
-                                                            <p>${photo.caption}</p>
-                                                        </div>
-                                                    </div>
-                                                `).join('')}
+                                                ${slide.map(photo => {
+                                                    if (photo.type === 'double') {
+                                                        return `
+                                                            <div class="photo-item-double">
+                                                                ${photo.photos.map(p => `
+                                                                    <div class="photo-half">
+                                                                        <img src="${p.url}" alt="${p.title}">
+                                                                        <div class="photo-caption">
+                                                                            <h4>${p.title}</h4>
+                                                                            <p>${p.caption}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                `).join('')}
+                                                            </div>
+                                                        `;
+                                                    } else {
+                                                        return `
+                                                            <div class="photo-item">
+                                                                <img src="${photo.url}" alt="${photo.title}">
+                                                                <div class="photo-caption">
+                                                                    <h4>${photo.title}</h4>
+                                                                    <p>${photo.caption}</p>
+                                                                </div>
+                                                            </div>
+                                                        `;
+                                                    }
+                                                }).join('')}
                                             </div>
                                         `).join('')}
                                     </div>
@@ -1185,4 +1262,3 @@
     </script>
 </body>
 </html>
-
