@@ -971,7 +971,9 @@
                             name: "产品摄影",
                             photos: [
                                 { url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600", title: "Apple Watch Series 8", caption: "精致细节呈现" },
-                                { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600", title: "运动耳机", caption: "动感视觉" },
+                                { type: "double",  // ← 标记为双图
+                                 photos: [{url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",title: "运动耳机 - 上",caption: "动感视觉"},{url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",title: "运动耳机 - 下",caption: "细节展示"}]}，
+
                                 { url: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=600", title: "香水瓶", caption: "光影艺术" },
                                 { url: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600", title: "运动鞋", caption: "质感表现" }
                             ]
@@ -1183,3 +1185,4 @@
     </script>
 </body>
 </html>
+
